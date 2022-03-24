@@ -71,6 +71,9 @@
                      (image-mode)))))))
   (when (posframe-workable-p)
     (posframe-show org-preview-image-link-posframe--tmp-buf
-                   :position (point))))
+                   :position (point))
+     (clear-this-command-keys) ;; https://emacs-china.org/t/posframe/9374/2
+     (push (read-event) unread-command-events)
+     (posframe-delete org-preview-image-link-posframe--tmp-buf)))
 
 (provide 'org-preview-image-link-posframe)
