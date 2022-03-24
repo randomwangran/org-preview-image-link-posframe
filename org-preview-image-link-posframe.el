@@ -41,7 +41,7 @@
 ;; file:
 ;; (require 'org-preview-image-link-posframe)
 
-(require 'org-mode)
+(require 'org)
 (require 'posframe)
 
 (defvar org-preview-image-link-posframe--tmp-buf " opilp-tmp-buf")
