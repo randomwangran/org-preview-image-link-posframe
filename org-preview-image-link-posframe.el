@@ -1,4 +1,4 @@
-;;; org-preview-image-link-posframe --- Show the margin note at point  -*- lexical-binding: t; -*-
+;;; org-preview-image-link-posframe --- Show the preview image from an org-mode image link  -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2022 Ran Wang
 
@@ -6,7 +6,7 @@
 ;; URL: https://github.com/randomwangran/org-preview-image-link-posframe
 ;; Version: 0.0.1
 ;; Package-Requires: ((emacs "27.1") (org "9.4") (posframe "1.1.5") (avy "0.5.0"))
-;; Keywords: org-mode, preview, writing, note-taking, posframe
+;; Keywords: org-mode, preview, writing, note-taking, posframe, avy
 
 ;; This file is not part of GNU Emacs.
 
@@ -25,7 +25,7 @@
 
 ;;; Commentary:
 
-;; This package preview an image at a link.
+;; This package preview an image on the fly.
 
 ;;;; Installation
 
@@ -68,8 +68,7 @@ when any input is received from the user.
 With a univeral argument, the posframe will hold on there. This
 is useful for writing descriptions for the figure without lossing
 its content. In this case, the way to delete the posframe frame
-is to press `C-g`.
-"
+is to press `C-g`. "
   (interactive "d")
   (let* ((context
 	  (plist-get (car (cdr (org-element-lineage
