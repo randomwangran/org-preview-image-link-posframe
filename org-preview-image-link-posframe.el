@@ -46,6 +46,11 @@
 
 (defvar org-preview-image-link-posframe--tmp-buf " opilp-tmp-buf")
 
+(defcustom opilp-off-set 500
+  "The off-set for showing the image at point."
+  :type 'integer
+  :safe #'integerp)
+
 (defun org-preview-image-link-posframe (point)
   (interactive "d")
   (posframe-delete-all)
@@ -71,7 +76,8 @@
                      (image-mode)))))))
   (when (posframe-workable-p)
     (posframe-show org-preview-image-link-posframe--tmp-buf
-                   :position (point))
+                   :position (point)
+                   :x-pixel-offset opilp-off-set)
      (clear-this-command-keys) ;; https://emacs-china.org/t/posframe/9374/2
      (push (read-event) unread-command-events)
      (posframe-delete org-preview-image-link-posframe--tmp-buf)))
