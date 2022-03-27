@@ -60,8 +60,16 @@ just a workaround."
   :safe #'integerp)
 
 (defun org-preview-image-link-posframe (point)
+  "Preview the image at an org-link. After the execution, the
+default response for the next action is to delete the posframe
+when any input is received from the user.
+
+With a univeral argument, the posframe will hold on there. This
+is useful for writing descriptions for the figure without lossing
+its content. In this case, the way to delete the posframe frame
+is to press `C-g`.
+"
   (interactive "d")
-  (posframe-delete-all)
   (let* ((context
 	  (plist-get (car (cdr (org-element-lineage
 	                        (org-element-context)
@@ -85,15 +93,27 @@ just a workaround."
                        (insert-image (create-image path 'png nil :width 300))
                        (image-mode))))))))
   (when (posframe-workable-p)
-    (if (< (current-column) opilp-off-threshold)
-        (posframe-show org-preview-image-link-posframe--tmp-buf
-                   :position (point)
-                   :x-pixel-offset opilp-off-set)
-      (posframe-show org-preview-image-link-posframe--tmp-buf
-                   :position (point)
-                   :x-pixel-offset (- opilp-off-set 200)))
-     (clear-this-command-keys) ;; https://emacs-china.org/t/posframe/9374/2
-     (push (read-event) unread-command-events)
-     (posframe-delete org-preview-image-link-posframe--tmp-buf)))
+    (if  (equal current-prefix-arg nil)
+        (progn (if (< (current-column) opilp-off-threshold)
+                   (posframe-show org-preview-image-link-posframe--tmp-buf
+                                  :position (point)
+                                  :x-pixel-offset opilp-off-set)
+                 (posframe-show org-preview-image-link-posframe--tmp-buf
+                                :position (point)
+                                :x-pixel-offset (- opilp-off-set 200)))
+               (clear-this-command-keys)
+               (push (read-event) unread-command-events)
+               (posframe-delete org-preview-image-link-posframe--tmp-buf))
+      (progn (if (< (current-column) opilp-off-threshold)
+                 (posframe-show org-preview-image-link-posframe--tmp-buf
+                                :position (point)
+                                :x-pixel-offset opilp-off-set)
+               (posframe-show org-preview-image-link-posframe--tmp-buf
+                              :position (point)
+                              :x-pixel-offset (- opilp-off-set 200)))))))
+
+(advice-add 'keyboard-quit :around
+            (lambda (&rest _)
+              (posframe-delete-all)))
 
 (provide 'org-preview-image-link-posframe)
