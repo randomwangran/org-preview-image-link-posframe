@@ -51,6 +51,14 @@
   :type 'integer
   :safe #'integerp)
 
+(defcustom opilp-off-threshold 35
+  "The threshold for determining the location of the image.
+
+For showing the figure at approxiately the same location. It is
+just a workaround."
+  :type 'integer
+  :safe #'integerp)
+
 (defun org-preview-image-link-posframe (point)
   (interactive "d")
   (posframe-delete-all)
@@ -75,9 +83,13 @@
                      (insert-image (create-image path 'png nil :width 300))
                      (image-mode)))))))
   (when (posframe-workable-p)
-    (posframe-show org-preview-image-link-posframe--tmp-buf
+    (if (< (current-column) opilp-off-threshold)
+        (posframe-show org-preview-image-link-posframe--tmp-buf
                    :position (point)
                    :x-pixel-offset opilp-off-set)
+      (posframe-show org-preview-image-link-posframe--tmp-buf
+                   :position (point)
+                   :x-pixel-offset (- opilp-off-set 200)))
      (clear-this-command-keys) ;; https://emacs-china.org/t/posframe/9374/2
      (push (read-event) unread-command-events)
      (posframe-delete org-preview-image-link-posframe--tmp-buf)))
