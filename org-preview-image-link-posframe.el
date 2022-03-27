@@ -5,7 +5,7 @@
 ;; Author: Ran Wang
 ;; URL: https://github.com/randomwangran/org-preview-image-link-posframe
 ;; Version: 0.0.1
-;; Package-Requires: ((emacs "27.1") (org "9.4") (posframe "1.1.5")
+;; Package-Requires: ((emacs "27.1") (org "9.4") (posframe "1.1.5") (avy "0.5.0"))
 ;; Keywords: org-mode, preview, writing, note-taking, posframe
 
 ;; This file is not part of GNU Emacs.
@@ -43,6 +43,7 @@
 
 (require 'org)
 (require 'posframe)
+(require 'avy)
 
 (defvar org-preview-image-link-posframe--tmp-buf " opilp-tmp-buf")
 
@@ -111,6 +112,27 @@ is to press `C-g`.
                (posframe-show org-preview-image-link-posframe--tmp-buf
                               :position (point)
                               :x-pixel-offset (- opilp-off-set 200)))))))
+
+(defun avy-preview-figure (point)
+  "Use avy to preview the image without lossing the point position."
+  (interactive "d")
+  (save-restriction
+    (save-excursion
+      (goto-char (nth 0 (avy--generic-jump "Fig\\|Figs\\|Figure\\|Figures" nil)))
+      (search-forward "[[")
+      (call-interactively #'org-preview-image-link-posframe)
+      (goto-char point))))
+
+(defun avy-preview-figure-hold (point)
+  "Use avy to preview the image without lossing the point position.
+
+The image is hold on."
+  (interactive "d")
+  (goto-char (nth 0 (avy--generic-jump "Fig\\|Figs\\|Figure\\|Figures" nil)))
+  (search-forward "[[")
+  (let ((current-prefix-arg 1))
+    (call-interactively #'org-preview-image-link-posframe)
+    (goto-char point)))
 
 (advice-add 'keyboard-quit :around
             (lambda (&rest _)
