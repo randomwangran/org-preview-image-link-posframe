@@ -67,21 +67,23 @@ just a workaround."
 	                        (org-element-context)
 	                        '(link)
 	                        t))) ':raw-link))
-         (point (save-excursion
-                (widen)
-		(goto-char (point-min))
-		(re-search-forward (concat "#\\+name:\s*" context) nil t)
-                (re-search-forward org-bracket-link-regexp nil t)))
-         (path (save-excursion
-                 (widen)
-		 (goto-char point)
-                 (let* ((element (org-element-context))
-                        (path (expand-file-name (org-element-property :path element))))
-                   (with-current-buffer
-                       (get-buffer-create org-preview-image-link-posframe--tmp-buf)
-                     (erase-buffer)
-                     (insert-image (create-image path 'png nil :width 300))
-                     (image-mode)))))))
+         (point (save-restriction
+                  (save-excursion
+                    (widen)
+		    (goto-char (point-min))
+		    (re-search-forward (concat "#\\+name:\s*" context) nil t)
+                    (re-search-forward org-bracket-link-regexp nil t))))
+         (path (save-restriction
+                 (save-excursion
+                   (widen)
+		   (goto-char point)
+                   (let* ((element (org-element-context))
+                          (path (expand-file-name (org-element-property :path element))))
+                     (with-current-buffer
+                         (get-buffer-create org-preview-image-link-posframe--tmp-buf)
+                       (erase-buffer)
+                       (insert-image (create-image path 'png nil :width 300))
+                       (image-mode))))))))
   (when (posframe-workable-p)
     (if (< (current-column) opilp-off-threshold)
         (posframe-show org-preview-image-link-posframe--tmp-buf
